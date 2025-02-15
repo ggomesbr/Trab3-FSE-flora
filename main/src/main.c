@@ -10,6 +10,6 @@
 
 void app_main()
 {
-    xTaskCreate(dht11_task, "DHT11 Task", 2048, NULL, 5, NULL);
+    xTaskCreate(&dht11_task, "consulta_sensor", 2048, NULL, 3, NULL);
 
 }

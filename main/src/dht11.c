@@ -5,7 +5,9 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 
-#include "DHT11.h"
+#include "dht11.h"
+
+#define TAG "DHT11"
 
 static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
@@ -100,8 +102,7 @@ struct dht11_reading DHT11_read() {
     } else {
         return last_read = _crcError();
     }
-
-
+}
 
 void dht11_task(void *params) {
     DHT11_init(GPIO_NUM_18); // Inicializa o sensor no pino correto
@@ -117,5 +118,4 @@ void dht11_task(void *params) {
 
         vTaskDelay(pdMS_TO_TICKS(2000)); // Aguarda 2 segundos antes de nova leitura
     }
-}
 }
