@@ -15,6 +15,8 @@ struct dht11_reading {
     int humidity;
 };
 
+void dht11_task(void *params);
+
 void DHT11_init(gpio_num_t gpio_num);
 
 struct dht11_reading DHT11_read();

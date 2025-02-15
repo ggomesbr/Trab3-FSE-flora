@@ -10,12 +10,6 @@
 
 void app_main()
 {
-    DHT11_init(GPIO_NUM_18);
+    xTaskCreate(dht11_task, "DHT11 Task", 2048, NULL, 5, NULL);
 
-    while(1) {
-        printf("Temperature is %d \n", DHT11_read().temperature);
-        printf("Humidity is %d\n", DHT11_read().humidity);
-        printf("Status code is %d\n", DHT11_read().status);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
 }

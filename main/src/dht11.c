@@ -3,6 +3,7 @@
 #include "rom/ets_sys.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 
 #include "DHT11.h"
 
@@ -99,4 +100,22 @@ struct dht11_reading DHT11_read() {
     } else {
         return last_read = _crcError();
     }
+
+
+
+void dht11_task(void *params) {
+    DHT11_init(GPIO_NUM_18); // Inicializa o sensor no pino correto
+
+    while (1) {
+        struct dht11_reading result = DHT11_read(); // Lê os valores do sensor
+        
+        if (result.status == DHT11_OK) {
+            ESP_LOGI(TAG, "Temperatura: %d°C, Umidade: %d%%", result.temperature, result.humidity);
+        } else {
+            ESP_LOGE(TAG, "Erro ao ler DHT11! Código de erro: %d", result.status);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(2000)); // Aguarda 2 segundos antes de nova leitura
+    }
+}
 }
