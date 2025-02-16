@@ -14,6 +14,8 @@
 #define ADC_MIN 350
 #define ADC_MAX 2800
 
+extern float ldr_illuminance;
+
 // 🔹 Estrutura de dados para armazenar informações do LDR
 typedef struct {
     uint8_t adc_device;  // Qual ADC está sendo usado (ADC1 ou ADC2)
@@ -28,5 +30,7 @@ int get_average_adc(ldr_handle_t *ldr);
 float ldr_get_calibrated_illuminance(ldr_handle_t *ldr);
 
 void ldr_task(void *params);
+
+float get_ldr_illuminance();
 
 #endif 

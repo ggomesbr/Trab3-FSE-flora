@@ -4,22 +4,33 @@
 #include "esp_system.h"
 #include "esp_spi_flash.h"
 #include "esp_log.h"
-
 #include "ldr.h"
 #include "dht11.h"
-#include "water_sensor.h"
+#include "mqtt.h"
+#include "freertos/semphr.h"
+#include "led_control.h"
 
 #define TAG "MAIN"
 
-void app_main(void)
-{
+SemaphoreHandle_t conexaoMQTTSemaphore;
+
+void app_main(void) {
     esp_log_level_set(TAG, ESP_LOG_INFO);
     ESP_LOGI(TAG, "Iniciando o sistema de monitoramento...");
+
+    conexaoMQTTSemaphore = xSemaphoreCreateBinary();
+
+    xTaskCreate(&comunicacao_servidor_task, "comunicacao_broker", 4096, NULL, 1, NULL);
 
     // Criando as tarefas para cada sensor
     xTaskCreate(&ldr_task, "ldr_task", 2048, NULL, 5, NULL);
     xTaskCreate(&dht11_task, "dht11_task", 2048, NULL, 5, NULL);
-    xTaskCreate(&water_sensor_task, "water_sensor_task", 2048, NULL, 5, NULL);
+
+    // Inicializa o LED e o botão BOOT
+    led_control_init();
+
+    // Criando a task para controle do LED
+    xTaskCreate(&led_task, "led_task", 2048, NULL, 5, NULL);
 
     ESP_LOGI(TAG, "Todas as tarefas foram iniciadas");
 }
