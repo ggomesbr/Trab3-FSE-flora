@@ -29,7 +29,6 @@ void app_main(void)
     // Criando as tarefas para cada sensor
     xTaskCreate(&ldr_task, "ldr_task", 2048, NULL, 5, NULL);
     xTaskCreate(&dht11_task, "dht11_task", 2048, NULL, 5, NULL);
-
     led_control_init();
     xTaskCreate(&led_task, "led_task", 2048, NULL, 5, NULL);
 
