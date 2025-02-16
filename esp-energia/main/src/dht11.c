@@ -4,14 +4,22 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
+#include "cJSON.h"
+#include "json_treatment.h"
 
 #include "dht11.h"
+#include "mqtt.h"
 
 #define TAG "DHT11"
+
 
 static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
 static struct dht11_reading last_read;
+
+float temperature= 0;
+float humidity = 0;
+
 
 static int _waitOrTimeout(uint16_t microSeconds, int level) {
     int micros_ticks = 0;
@@ -104,14 +112,20 @@ struct dht11_reading DHT11_read() {
     }
 }
 
+
 void dht11_task(void *params) {
     DHT11_init(GPIO_NUM_18); // Inicializa o sensor no pino correto
+
 
     while (1) {
         struct dht11_reading result = DHT11_read(); // Lê os valores do sensor
         
+        temperature = (float)result.temperature;
+        humidity = (float)result.humidity;
+
         if (result.status == DHT11_OK) {
             ESP_LOGI(TAG, "Temperatura: %d°C, Umidade: %d%%", result.temperature, result.humidity);
+            //send_dht_telemetry(&temperature, &humidity);
         } else {
             ESP_LOGE(TAG, "Erro ao ler DHT11! Código de erro: %d", result.status);
         }

@@ -6,7 +6,6 @@
 
 #define TAG "LED_CONTROL"
 
-float ldr_illuminance = 0.0
 
 void led_control_init(void) {
     // Configuração do Timer PWM
@@ -42,11 +41,10 @@ void led_control_init(void) {
 
 void led_task(void *pvParameter) {
     while (true) {
-        int button_state = gpio_get_level(BOOT_BUTTON);
 
-        ldr_illuminance = get_ldr_illuminance();
+        float ldr_illuminance = get_ldr_illuminance();
 
-        ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, (luminancia/100)*255, 1000, LEDC_FADE_WAIT_DONE); //tenho que publicar o illuminance. ao inves de 50 ;e o illuminance
+        ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, (ldr_illuminance/100)*255, 1000, LEDC_FADE_WAIT_DONE); //tenho que publicar o illuminance. ao inves de 50 ;e o illuminance
 
         vTaskDelay(pdMS_TO_TICKS(100)); // Pequeno delay para evitar leituras erradas
     }

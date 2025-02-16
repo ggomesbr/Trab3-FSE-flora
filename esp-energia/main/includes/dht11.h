@@ -3,6 +3,9 @@
 
 #include "driver/gpio.h"
 
+extern float temperature;
+extern float humidity;
+
 enum dht11_status {
     DHT11_CRC_ERROR = -2,
     DHT11_TIMEOUT_ERROR,
