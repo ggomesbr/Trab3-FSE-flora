@@ -7,6 +7,7 @@
 #include "driver/gpio.h"
 #include "esp_sleep.h"
 #include "light_sleep.h"
+#include "json_treatment.h"
 
 #define TAG "WATER_SENSOR"
 #define LED_GPIO GPIO_NUM_2
@@ -29,22 +30,19 @@ void led_init() {
 }
 
 void water_sensor_init() {
-    adc2_config_channel_atten(WATER_SENSOR_CHANNEL, ADC_ATTEN_DB_11);
-    esp_adc_cal_characterize(ADC_UNIT_2, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc_chars);
+    adc1_config_width(ADC_WIDTH_BIT_12);
+    adc1_config_channel_atten(WATER_SENSOR_CHANNEL, ADC_ATTEN_DB_11);
+    esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc_chars);
 }
 
 int get_average_water_adc() {
     int sum = 0;
-    int valid_samples = 0;
     for (int i = 0; i < NUM_SAMPLES; i++) {
-        int raw_value;
-        if (adc2_get_raw(WATER_SENSOR_CHANNEL, ADC_WIDTH_BIT_12, &raw_value) == ESP_OK) {
-            sum += raw_value;
-            valid_samples++;
-        }
+        sum += adc1_get_raw(WATER_SENSOR_CHANNEL);
     }
-    return valid_samples > 0 ? sum / valid_samples : 0;
+    return sum / NUM_SAMPLES;
 }
+
 
 float water_get_calibrated_level() {
     int raw_adc = get_average_water_adc();
@@ -68,9 +66,11 @@ void water_sensor_task(void *pvParameters) {
         if(water_level < 10.0) {
                 ESP_LOGE(TAG, "Nível de água muito baixo! %.2f%%", water_level);
                 led_toggle();
+
             } else {
                 gpio_set_level(LED_GPIO, false);
                 ESP_LOGI(TAG, "Nível de água: %.2f%%", water_level);
+                send_water_telemetry(&water_level);
                 ESP_LOGI(TAG, "Entrando em light sleep");
                 light_sleep_task();
             }
