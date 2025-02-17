@@ -10,7 +10,6 @@
 #include "nvs_flash.h"
 
 
-#include "mqtt.h"
 #include "freertos/semphr.h"
 #include "mqtt.h"
 #include "led_control.h"
