@@ -125,7 +125,7 @@ void dht11_task(void *params) {
 
         if (result.status == DHT11_OK) {
             ESP_LOGI(TAG, "Temperatura: %d°C, Umidade: %d%%", result.temperature, result.humidity);
-            //send_dht_telemetry(&temperature, &humidity);
+            send_dht_telemetry(&temperature, &humidity);
         } else {
             ESP_LOGE(TAG, "Erro ao ler DHT11! Código de erro: %d", result.status);
         }

@@ -23,14 +23,6 @@ void send_water_telemetry(void *water_level)
     mqtt_envia_mensagem("v1/devices/me/telemetry", cJSON_Print(root));
 }
 
-void set_attributes_states(char *key, int value, int topic_id)
-{
-    if (strcmp("setBoardLed", key) == 0)
-    {
-        //set_board_led_state(value, topic_id);
-    }
-}
-
 void mqtt_event_data_parser(char *data, char *topic)
 {
     cJSON *json = cJSON_Parse(data);
@@ -43,7 +35,4 @@ void mqtt_event_data_parser(char *data, char *topic)
       &topic_id);
     char *key = cJSON_GetObjectItem(json, "method")->valuestring;
     int value = cJSON_GetObjectItem(json, "params")->valueint;
-    if(strstr(key, "set") != NULL){
-        set_attributes_states(key, value, topic_id);
-    }
 }

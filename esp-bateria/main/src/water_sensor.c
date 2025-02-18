@@ -11,6 +11,7 @@
 
 #define TAG "WATER_SENSOR"
 #define LED_GPIO GPIO_NUM_2
+#define BUZZER_GPIO GPIO_NUM_5
 
 
 static esp_adc_cal_characteristics_t adc_chars;
@@ -18,15 +19,26 @@ static esp_adc_cal_characteristics_t adc_chars;
 float water_level;
 
 bool led_state = false;
+bool buzzer_satate = false;
 
 void led_toggle() {
     led_state = !led_state;
     gpio_set_level(LED_GPIO, led_state);
 }
 
+void buzzer_toggle() {
+    buzzer_satate = !buzzer_satate;
+    gpio_set_level(BUZZER_GPIO, buzzer_satate);
+}
+
 void led_init() {
     gpio_reset_pin(LED_GPIO);
     gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
+}
+
+void buzzer_init() {
+    gpio_reset_pin(BUZZER_GPIO);
+    gpio_set_direction(BUZZER_GPIO, GPIO_MODE_OUTPUT);
 }
 
 void water_sensor_init() {
@@ -57,6 +69,7 @@ float water_get_calibrated_level() {
 void water_sensor_task(void *pvParameters) {
     water_sensor_init();
     led_init();
+    buzzer_init();
     while (1) {
         water_level = water_get_calibrated_level();
         ESP_LOGI(TAG, "Nível de Água: %.2f%%", water_level);
@@ -66,7 +79,7 @@ void water_sensor_task(void *pvParameters) {
         if(water_level < 10.0) {
                 ESP_LOGE(TAG, "Nível de água muito baixo! %.2f%%", water_level);
                 led_toggle();
-
+                buzzer_toggle();
             } else {
                 gpio_set_level(LED_GPIO, false);
                 ESP_LOGI(TAG, "Nível de água: %.2f%%", water_level);

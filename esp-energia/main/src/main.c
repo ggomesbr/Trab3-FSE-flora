@@ -36,26 +36,6 @@ void wifi_connected(void * params)
   }
 }
 
-void handle_server_communication(void * params)
-{
-  char mensagem[50];
-  char jsonAtributos[200];
-  if(xSemaphoreTake(connectionMQTTSemaphore, portMAX_DELAY))
-  {
-    while(true)
-    {
-       float temp = 20.0 + (float)rand()/(float)(RAND_MAX/10.0);
-       
-      //  sprintf(mensagem, "{\"temperature\": %f}", temp);
-      //  mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
-
-      //  sprintf(jsonAtributos, "{\"quantidade de pinos\": 5, \n\"umidade\": 20}");
-      //  mqtt_envia_mensagem("v1/devices/me/attributes", jsonAtributos);
-
-       vTaskDelay(3000 / portTICK_PERIOD_MS);
-    }
-  }
-}
 
 void app_main(void)
 {
@@ -76,7 +56,6 @@ void app_main(void)
     wifi_start();
 
     xTaskCreate(&wifi_connected,  "Conexão ao MQTT", 4096, NULL, 1, NULL);
-    xTaskCreate(&handle_server_communication, "Comunicação com Broker", 4096, NULL, 1, NULL);
 
     // Criando as tarefas para cada sensor
     xTaskCreate(&ldr_task, "ldr_task", 2048, NULL, 5, NULL);
