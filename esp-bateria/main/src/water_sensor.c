@@ -13,11 +13,9 @@
 #define LED_GPIO GPIO_NUM_2
 #define BUZZER_GPIO GPIO_NUM_5
 
-
 static esp_adc_cal_characteristics_t adc_chars;
 
 float water_level;
-
 bool led_state = false;
 bool buzzer_satate = false;
 
@@ -42,6 +40,10 @@ void buzzer_init() {
 }
 
 void water_sensor_init() {
+<<<<<<< HEAD
+=======
+    // Configuração do ADC1 (agora correto para GPIO34)
+>>>>>>> 7c9bdeac1c13cd2ee1431a88e01adbd33da8a9e0
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(WATER_SENSOR_CHANNEL, ADC_ATTEN_DB_11);
     esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 0, &adc_chars);
@@ -50,7 +52,15 @@ void water_sensor_init() {
 int get_average_water_adc() {
     int sum = 0;
     for (int i = 0; i < NUM_SAMPLES; i++) {
+<<<<<<< HEAD
         sum += adc1_get_raw(WATER_SENSOR_CHANNEL);
+=======
+        int raw_value = adc1_get_raw(WATER_SENSOR_CHANNEL);
+        if (raw_value != -1) {  // Verifica se a leitura é válida
+            sum += raw_value;
+            valid_samples++;
+        }
+>>>>>>> 7c9bdeac1c13cd2ee1431a88e01adbd33da8a9e0
     }
     return sum / NUM_SAMPLES;
 }
@@ -74,6 +84,7 @@ void water_sensor_task(void *pvParameters) {
         water_level = water_get_calibrated_level();
         ESP_LOGI(TAG, "Nível de Água: %.2f%%", water_level);
 
+<<<<<<< HEAD
         // Aqui você pode adicionar código para enviar os dados via MQTT, se necessário
 
         if(water_level < 10.0) {
@@ -89,10 +100,18 @@ void water_sensor_task(void *pvParameters) {
             }
 
             ESP_LOGI(TAG, "Acordando do light sleep");
+=======
+        if (water_level < 10.0) {
+            led_toggle();
+        } else {
+            gpio_set_level(LED_GPIO, false);
+            ESP_LOGI(TAG, "Nível de água: %.2f%%", water_level);
+        }
+>>>>>>> 7c9bdeac1c13cd2ee1431a88e01adbd33da8a9e0
 
+        ESP_LOGI(TAG, "Aguardando próximo ciclo...");
 
         // Aguardar até o próximo ciclo
         vTaskDelay(pdMS_TO_TICKS(500));  // Pequeno delay para evitar sobrecarga da CPU
     }
-
 }

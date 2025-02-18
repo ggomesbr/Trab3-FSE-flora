@@ -5,7 +5,11 @@
 #include "driver/adc.h"
 #include "driver/gpio.h"
 
+<<<<<<< HEAD
 #define WATER_SENSOR_CHANNEL ADC1_CHANNEL_6  
+=======
+#define WATER_SENSOR_CHANNEL ADC1_CHANNEL_6  // Agora usa ADC1 (GPIO34)
+>>>>>>> 7c9bdeac1c13cd2ee1431a88e01adbd33da8a9e0
 #define NUM_SAMPLES 64   // Número de amostras para suavizar a leitura
 #define ADC_MIN 400      // Ajuste após testes para nível 0%
 #define ADC_MAX 2000     // Antes era 3000, agora ajustamos para 2200 que correspondia a 45%
