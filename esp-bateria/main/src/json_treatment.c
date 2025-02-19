@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "esp_event.h"
 #include "mqtt_client.h"
+#include "json_treatment.h"
 
 #define TAG "MQTT"
 
